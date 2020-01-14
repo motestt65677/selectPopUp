@@ -1,7 +1,7 @@
 var SelectPopUP = function(target, settings){
     this.target      = null;
-    this.selectedValue = [];
-    this.selections = [];
+    this.selections = []; // list of all selections
+    this.selectedValue = []; //list of selected values
     this.selectionContainer = null;
 
 
@@ -18,7 +18,6 @@ var SelectPopUP = function(target, settings){
         
         this.selectedValue = this.getSelectedValue();
         this.selections = this.getSelections();
-
 		this.settings = this.getSettings(settings);
         this.buildSelect();
 
@@ -102,7 +101,7 @@ var SelectPopUP = function(target, settings){
         this.target.parentNode.appendChild(this.selectionContainer);
         this.target.parentNode.appendChild(this.select);
 
-
+        this.updateSelection();
 		// this.select.classList.add('select');
 		// this.select.setAttribute('tabindex', this.target.tabIndex);
 		// this.select.addEventListener('keydown', this.handleSelectKeydown.bind(this));
@@ -196,7 +195,17 @@ var SelectPopUP = function(target, settings){
             }
         }
     }
-    this.updateSelection
+    this.updateSelection = function(){
+        var selections = this.selectionContainer.getElementsByClassName("selection");
+        var selectedValue = this.selectedValue ? this.selectedValue : [];
+        for(var i=0; i< selections.length; i++){
+            var selectionText = selections[i].getElementsByClassName("selectionText")[0];
+            var selectionCheck = selections[i].getElementsByClassName("selectionCheck")[0];
+            if(selectedValue.includes(selectionText.innerHTML)){
+                selectionCheck.checked = true;
+            }
+        }
+    }
     this.createSelectedItem = function(text){
         var span = document.createElement("span");
         span.innerHTML = text;
