@@ -1,0 +1,64 @@
+.select{
+    box-sizing: border-box;
+    list-style: none;
+    margin: 0;
+    width: 100%;
+    background: #f5f5f5;
+    padding: 6px 12px;
+    background-color: #f5f5f5;
+    border-radius: 0;
+    border: none;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+.selectedItem{
+    
+    background-color: #e4e4e4;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    cursor: default;
+    margin-right: 5px;
+    margin-top: 5px;
+    padding: 0 5px;
+}
+/* .selectionList{
+    position: absolute;
+    border: 1px solid black;
+    width: 5em;
+} */
+.selectionContainer{
+    position:absolute;
+    width: 20em;
+    left: 25%;
+    border: 1px solid red;
+    background-color: white;
+    padding: 2em;
+}
+.selection{
+    position:relative;
+    border-bottom: 1px solid rgb(122, 122, 122);
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+}
+.hide{
+    display:none;
+}
+.selectionCheck{
+    float: right;
+}
+.selectionTitle{
+    font-weight: bold;
+}
+.selectionFooter{
+    padding-top: 2em;
+    height: 2em;
+}
+.selectionConfirm{
+
+}
+.selectionCancel{
+    margin-left:1em;
+}
+.buttonContainer{
+    float:right;
+}
