@@ -3,22 +3,25 @@
         <title>select pop up</title>
         <script></script>
         <!-- <script src="jQuery-3.4.1.min.js"></script> -->
+        <script src="jQuery-3.4.1.min.js"></script>
         <script src="selectPopUp.js"></script>
         <link rel="stylesheet" href="selectPopUp.css">
+
     </head>
     <body>
         <h1>Select Pop Up</h1>
-        <div>
-            <select id="mainSelect">
-                <option selected="selected">Volvo</option>
-                <option >Saab</option>
-                <option selected="selected">Mercedes</option>
-                <option>Audi</option>
-            </select>
-        </div>
+            <div>
+                <select id="mainSelect" multiple>
+                    <option value="a">Volvo</option>
+                    <option value="b"selected>Saab</option>
+                    <option value="c" selected>Mercedes</option>
+                    <option value="d">Audi</option>
+                </select>
+            </div>
+
         <script>
             var el     = document.querySelector('#mainSelect');
-            var select = new SelectPopUP(el, { /* settings */ });
+            var select = new SelectPopUP(el, {title:"Main Select"});
         </script>
     </body>
 </html>

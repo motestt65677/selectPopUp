@@ -1,9 +1,10 @@
 var SelectPopUP = function(target, settings){
     this.target      = null;
-    this.selections = []; // list of all selections
+    this.options = []; // list of all selections
+    this.selectedOptions = []; //list of selected options from selections
+    this.selectedText = [];
     this.selectedValue = []; //list of selected values
     this.selectionContainer = null;
-
 
 
     this.init = function() {
@@ -15,10 +16,12 @@ var SelectPopUP = function(target, settings){
 				this.target = document.querySelector(target);
 				break;
         }
-        
+        this.selectedOptions = this.getSelectedOptions();
         this.selectedValue = this.getSelectedValue();
-        this.selections = this.getSelections();
-		this.settings = this.getSettings(settings);
+        this.selectedText = this.getSelectedText();
+
+        this.options = this.getOptions();
+        this.settings = this.getSettings(settings);
         this.buildSelect();
 
         // this.target.
@@ -31,9 +34,7 @@ var SelectPopUP = function(target, settings){
     };
     this.getSettings = function(settings) {
 		var defaults = {
-			filtered: 'auto',
-			filter_threshold: 8,
-			filter_placeholder: 'Filter options...'
+			title: 'Title'
 		};
 
 		for(var p in settings) {
@@ -48,8 +49,8 @@ var SelectPopUP = function(target, settings){
         select.classList.add("select");
 
         //show selected item.
-        for(var i = 0; i< this.selectedValue.length; i++){
-            select.appendChild(this.createSelectedItem(this.selectedValue[i]));
+        for(var i = 0; i< this.selectedOptions.length; i++){
+            select.appendChild(this.createSelectedItem(this.selectedOptions[i].text));
         }
         this.select = select;
         this.select.addEventListener("click", this.toggleSelection.bind(this));
@@ -57,23 +58,24 @@ var SelectPopUP = function(target, settings){
         //create selectionList
         var selectionContainer = document.createElement('span');
         var selectionTitle = document.createElement("div");
-        selectionTitle.innerHTML = "Title";
+        selectionTitle.innerHTML = this.settings.title;
         selectionTitle.classList.add("selectionTitle");
         selectionContainer.appendChild(selectionTitle);
 
         selectionContainer.classList.add("selectionContainer");
         selectionContainer.classList.add("hide");
-        for(var i = 0; i< this.selections.length; i++){
+        for(var i = 0; i< this.options.length; i++){
             var selection = document.createElement('div');
             var selectionText = document.createElement("span");
             var selectionCheck = document.createElement("input");
-            selectionText.innerHTML = this.selections[i];
+            selectionText.innerHTML = this.options[i].text;
             selectionText.classList.add("selectionText");
 
             selectionCheck.setAttribute("type", "checkbox");
             selectionCheck.classList.add("selectionCheck");
-            selectionCheck.addEventListener("change", this.updateSelect.bind(this))
+            selectionCheck.addEventListener("change", this.selectionOnChange.bind(this))
             selection.classList.add("selection");
+            selection.setAttribute("data-selection-value", this.options[i].value);
             selection.appendChild(selectionText);
             selection.appendChild(selectionCheck);
             selectionContainer.appendChild(selection);
@@ -164,49 +166,69 @@ var SelectPopUP = function(target, settings){
     this.toggleSelection = function(){
         this.selectionContainer.classList.toggle("hide");
     }
-    this.create
+
     this.getSelectedValue = function(){
         var selectedValue = [];
-        var options =  this.target.children;
+        var options =  this.target.selectedOptions ? this.target.selectedOptions : [];
+
         for(var i = 0; i < options.length; i++){
-            if(options[i].getAttribute("selected")){
-                selectedValue.push(options[i].value);
-            }
+            selectedValue.push(options[i].value);
         }
         return selectedValue;
     }
-    this.getSelections = function(){
-        var selections = [];
-        var options =  this.target.children;
-        for(var i = 0; i < options.length; i++){
-            selections.push(options[i].value);
+    this.getSelectedText = function(){
+        var selectedText = []
+        var options =  this.target.selectedOptions ? this.target.selectedOptions : [];
+
+        for(var i = 0; i< options.length; i++){
+            selectedText.push(options[i].text);
+        }
+        return selectedText;
+    }
+    this.getSelectedOptions = function(){
+        return this.target.selectedOptions;
+    }
+
+    this.getOptions = function(){
+        var retOptions = [];
+        for(var i = 0; i < this.target.options.length; i++){
+            retOptions.push(this.target.options[i]);
         }       
-        return selections;
+        return retOptions;
     }
     this.updateSelect = function(){
+
+
+        //update selected option
+
         this.select.innerHTML = "";
-        this.selectedValue = [];
+        this.selectedOptions = [];
         var selections = this.selectionContainer.getElementsByClassName("selection");
         for(var i=0; i< selections.length; i++){
             var selectionText = selections[i].getElementsByClassName("selectionText")[0];
             var selectionCheck = selections[i].getElementsByClassName("selectionCheck")[0];
             if(selectionCheck.checked){
                 this.select.appendChild(this.createSelectedItem(selectionText.innerHTML));
-                this.selectedValue.push(selectionText.innerHTML)
             }
         }
-        this.updateTarget();
+
+        //this.updateTarget();
+
     }
     this.updateSelection = function(){
         var selections = this.selectionContainer.getElementsByClassName("selection");
-        var selectedValue = this.selectedValue ? this.selectedValue : [];
+        //var selectedOptions = this.selectedOptions ? this.selectedOptions : [];
+        var selectedText = this.selectedText ? this.selectedText :[];
+
         for(var i=0; i< selections.length; i++){
             var selectionText = selections[i].getElementsByClassName("selectionText")[0];
             var selectionCheck = selections[i].getElementsByClassName("selectionCheck")[0];
-            if(selectedValue.includes(selectionText.innerHTML)){
+            if(selectedText.includes(selectionText.innerHTML)){
                 selectionCheck.checked = true;
             }
         }
+
+        
     }
     this.createSelectedItem = function(text){
         var span = document.createElement("span");
@@ -214,15 +236,66 @@ var SelectPopUP = function(target, settings){
         span.classList.add("selectedItem");
         return span;
     }
-    this.updateTarget = function(){
-        var options = this.target.children;
-        for(var i = 0; i < options.length; i++){
-            if(this.selectedValue.includes(options[i].innerHTML)){
-                options[i].setAttribute("selected", "selected");
-            }else{
-                options[i].setAttribute("selected", "");
+    this.updateTargetFromSelection = function(){
+
+        var selections = this.selectionContainer.getElementsByClassName("selection");
+        var selectedOptions = [];
+        var selectedText = [];
+        var selectedValue = [];
+        //clear options
+        this.target.innerHTML = "";
+        for(var i=0; i< selections.length; i++){
+            var selectionText = selections[i].getElementsByClassName("selectionText")[0];
+            var selectionCheck = selections[i].getElementsByClassName("selectionCheck")[0];
+            var selectionValue = selections[i].getAttribute("data-selection-value");
+            var option = this.findOptionByValue(selectionValue);
+
+            if(selectionCheck.checked){
+                option.selected = true;
+                this.target.appendChild(option);
+                selectedOptions.push(option);
+                selectedText.push(option.innerHTML);
+                selectedValue.push(option.value);
+            } else {
+                option.selected = false;
+                this.target.appendChild(option);
             }
         }
+        
+        //update selected options text and value
+        this.selectedOptions = selectedOptions;
+        this.selectedText = selectedText;
+        this.selectedValue = selectedValue;
+
+        //
+        // var options = this.target.children;
+        // var selectedValue = this.selectedValue ? this.selectedValue :[];
+        // console.log(selectedValue);
+        // for(var i = 0; i < options.length; i++){
+        //     if(selectedValue.includes(options[i].value)){
+        //         options[i].selected = true;
+        //     }else{
+        //         options[i].selected = false;
+        //     }
+        // }
+        //this.target.setAttribute("value", this.selectedValue);
+    }
+    this.findOptionByValue = function(input){
+        for(var i = 0; i < this.options.length; i++){
+            if(this.options[i].value == input){
+                return this.options[i];
+            }
+        }
+    }
+    this.selectionOnChange = function(){
+        this.updateTargetFromSelection();
+        //this.selectedOptions = this.getSelectedOptions();
+
+        // this.selectedText = this.getSelectedText();
+        // this.selectedValue = this.getSelectedValue();
+        this.updateSelect();
+        
+        // this.updateTarget();
     }
     this.init();
 }
