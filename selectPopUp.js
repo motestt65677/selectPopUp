@@ -16,6 +16,7 @@ var SelectPopUP = function(target, settings){
 				this.target = document.querySelector(target);
 				break;
         }
+        this.target.classList.add("hide");
         this.selectedOptions = this.getSelectedOptions();
         this.selectedValue = this.getSelectedValue();
         this.selectedText = this.getSelectedText();
@@ -23,6 +24,8 @@ var SelectPopUP = function(target, settings){
         this.options = this.getOptions();
         this.settings = this.getSettings(settings);
         this.buildSelect();
+        window.addEventListener("click", this.hideSelection.bind(this));
+        this.selectionContainer.addEventListener("click", this.selectionOnClick.bind(this));
 
         // this.target.
 		//this.target.parentNode.replaceChild(this.select, this.target);
@@ -54,7 +57,6 @@ var SelectPopUP = function(target, settings){
         }
         this.select = select;
         this.select.addEventListener("click", this.toggleSelection.bind(this));
-
         //create selectionList
         var selectionContainer = document.createElement('span');
         var selectionTitle = document.createElement("div");
@@ -87,16 +89,18 @@ var SelectPopUP = function(target, settings){
         buttonContainer.classList.add("buttonContainer");
 
 
-        var selectionConfirm = document.createElement("button");
-        selectionConfirm.innerHTML = "Confirm";
-        selectionConfirm.classList.add("selectionConfirm");
-        var selectionCancel = document.createElement("button");
-        selectionCancel.innerHTML = "Cancel";
-        selectionCancel.classList.add("selectionCancel");
-        selectionCancel.addEventListener("click", this.toggleSelection.bind(this))
+        //Confirm and Cancel
+        // var selectionConfirm = document.createElement("button");
+        // selectionConfirm.innerHTML = "Confirm";
+        // selectionConfirm.classList.add("selectionConfirm");
+        // var selectionCancel = document.createElement("button");
+        // selectionCancel.innerHTML = "Cancel";
+        // selectionCancel.classList.add("selectionCancel");
+        // selectionCancel.addEventListener("click", this.toggleSelection.bind(this))
+        // buttonContainer.appendChild(selectionConfirm);
+        // buttonContainer.appendChild(selectionCancel);
 
-        buttonContainer.appendChild(selectionConfirm);
-        buttonContainer.appendChild(selectionCancel);
+
         selectionFooter.appendChild(buttonContainer);
         selectionContainer.appendChild(selectionFooter);
 
@@ -105,66 +109,17 @@ var SelectPopUP = function(target, settings){
         this.target.parentNode.appendChild(this.select);
 
         this.updateSelection();
-		// this.select.classList.add('select');
-		// this.select.setAttribute('tabindex', this.target.tabIndex);
-		// this.select.addEventListener('keydown', this.handleSelectKeydown.bind(this));
-
-		// this.display = document.createElement('span');
-		// this.display.classList.add('value');
-		// this.display.addEventListener('click', this.handleDisplayClick.bind(this));
-		// this.select.appendChild(this.display);
-
-		// this.buildList();
-
-		// if(this.options.length) {
-		// 	this.value = this.options[this.target.selectedIndex].getAttribute('data-value');
-		// 	this.selected = this.options[this.target.selectedIndex];
-		// 	this.display.innerHTML = this.selected.innerHTML;
-		// }
-
-		// if(
-		// 	(this.settings.filtered === 'auto' && this.options.length >= this.settings.filter_threshold) ||
-		// 	this.settings.filtered === true
-		// ) {
-		// 	this.isLarge = true;
-		// 	this.select.classList.add('large');
-		// }
     }
-    // this.buildList = function() {
-	// 	this.list = document.createElement('div');
-	// 	this.list.classList.add('list');
-	// 	this.list.setAttribute('tabindex', '-1');
-	// 	// this.list.addEventListener('keydown', this.handleListKeydown.bind(this));
-	// 	// this.list.addEventListener('mouseenter', function() {
-	// 	// 	this.options[this.highlighted].classList.remove('hovered');
-	// 	// }.bind(this));
 
-	// 	this.highlighted = this.target.selectedIndex;
-
-	// 	//this.buildFilter();
-	// 	this.buildOptions();
-
-	// 	this.select.appendChild(this.list);
-    // };
-    // this.buildOptions = function() {
-	// 	var ul = document.createElement('ul');
-
-	// 	var options = this.target.querySelectorAll('option');
-
-	// 	for(var i = 0; i < options.length; i++) {
-	// 		var li = document.createElement('li');
-	// 		    li.setAttribute('data-value', options[i].value);
-	// 		    li.innerHTML = options[i].innerHTML;
-	// 		    li.addEventListener('click', this.handleOptionClick.bind(this));
-
-	// 		ul.appendChild(li);
-	// 		this.options.push(li);
-	// 	}
-
-	// 	this.list.appendChild(ul);
-    // };
-    this.toggleSelection = function(){
+    this.toggleSelection = function(e){
+        e.stopPropagation();
         this.selectionContainer.classList.toggle("hide");
+    }
+    this.selectionOnClick = function(e){
+        e.stopPropagation();
+    }
+    this.hideSelection = function(){
+        this.selectionContainer.classList.add("hide");
     }
 
     this.getSelectedValue = function(){
@@ -197,10 +152,7 @@ var SelectPopUP = function(target, settings){
         return retOptions;
     }
     this.updateSelect = function(){
-
-
         //update selected option
-
         this.select.innerHTML = "";
         this.selectedOptions = [];
         var selections = this.selectionContainer.getElementsByClassName("selection");
@@ -211,9 +163,6 @@ var SelectPopUP = function(target, settings){
                 this.select.appendChild(this.createSelectedItem(selectionText.innerHTML));
             }
         }
-
-        //this.updateTarget();
-
     }
     this.updateSelection = function(){
         var selections = this.selectionContainer.getElementsByClassName("selection");
@@ -266,19 +215,6 @@ var SelectPopUP = function(target, settings){
         this.selectedOptions = selectedOptions;
         this.selectedText = selectedText;
         this.selectedValue = selectedValue;
-
-        //
-        // var options = this.target.children;
-        // var selectedValue = this.selectedValue ? this.selectedValue :[];
-        // console.log(selectedValue);
-        // for(var i = 0; i < options.length; i++){
-        //     if(selectedValue.includes(options[i].value)){
-        //         options[i].selected = true;
-        //     }else{
-        //         options[i].selected = false;
-        //     }
-        // }
-        //this.target.setAttribute("value", this.selectedValue);
     }
     this.findOptionByValue = function(input){
         for(var i = 0; i < this.options.length; i++){
@@ -289,13 +225,7 @@ var SelectPopUP = function(target, settings){
     }
     this.selectionOnChange = function(){
         this.updateTargetFromSelection();
-        //this.selectedOptions = this.getSelectedOptions();
-
-        // this.selectedText = this.getSelectedText();
-        // this.selectedValue = this.getSelectedValue();
         this.updateSelect();
-        
-        // this.updateTarget();
     }
     this.init();
 }
