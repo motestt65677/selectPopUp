@@ -111,8 +111,8 @@ var SelectPopUP = function(target, settings){
         selectionContainer.appendChild(selectionFooter);
 
         this.selectionContainer = selectionContainer;
-        this.target.parentNode.appendChild(this.selectionContainer);
-        this.target.parentNode.appendChild(this.select);
+        this.target.parentNode.insertBefore(this.selectionContainer, this.target.nextSibling);
+        this.target.parentNode.insertBefore(this.select, this.target.nextSibling);
 
         this.updateSelection();
     }
