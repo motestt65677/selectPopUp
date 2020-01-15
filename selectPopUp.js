@@ -26,7 +26,7 @@ var SelectPopUP = function(target, settings){
         this.settings = this.getSettings(settings);
 
         this.buildSelect();
-        
+
         window.addEventListener("click", this.hideSelection.bind(this));
         this.selectionContainer.addEventListener("click", this.selectionOnClick.bind(this));
 
@@ -80,7 +80,7 @@ var SelectPopUP = function(target, settings){
             
             checkboxContainer.classList.add("checkboxContainer");
             selectionCheck.setAttribute("type", "checkbox");
-            // selectionCheck.classList.add("selectionCheck");
+            selectionCheck.classList.add("selectionCheckBox");
             selectionCheck.addEventListener("change", this.selectionOnChange.bind(this));
             checkboxContainer.appendChild(selectionCheck);
             checkboxContainer.appendChild(checkboxSpan);
