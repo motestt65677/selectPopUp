@@ -26,13 +26,16 @@ Javascript
     var select = new SelectPopUP(el, {title:"Main Select"});
 ```
 ## To get the value of select
-Either use jquery or an built-in function supported when you initiate a SelectPopUp element.
-##jQuery
+Either use jquery or an built-in function supported when you initiate a SelectPopUp.
+
+#### Jquery
+
 ```javascript
 $("#mainSelect").val();
 ```
-or\
-#Javascript
+or
+#### Javascript
+
 ```javascript
     var el     = document.querySelector('#mainSelect');
     var select = new SelectPopUP(el, {title:"Main Select"});

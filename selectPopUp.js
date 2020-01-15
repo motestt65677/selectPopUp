@@ -70,16 +70,22 @@ var SelectPopUP = function(target, settings){
             var selection = document.createElement('div');
             var selectionText = document.createElement("span");
             var selectionCheck = document.createElement("input");
+            var checkboxContainer = document.createElement("label");
+            var checkboxSpan = document.createElement("span");
             selectionText.innerHTML = this.options[i].text;
             selectionText.classList.add("selectionText");
-
+            
+            checkboxContainer.classList.add("checkboxContainer");
             selectionCheck.setAttribute("type", "checkbox");
-            selectionCheck.classList.add("selectionCheck");
-            selectionCheck.addEventListener("change", this.selectionOnChange.bind(this))
+            // selectionCheck.classList.add("selectionCheck");
+            selectionCheck.addEventListener("change", this.selectionOnChange.bind(this));
+            checkboxContainer.appendChild(selectionCheck);
+            checkboxContainer.appendChild(checkboxSpan);
+
             selection.classList.add("selection");
             selection.setAttribute("data-selection-value", this.options[i].value);
             selection.appendChild(selectionText);
-            selection.appendChild(selectionCheck);
+            selection.appendChild(checkboxContainer);
             selectionContainer.appendChild(selection);
 
         }
@@ -158,8 +164,9 @@ var SelectPopUP = function(target, settings){
         var selections = this.selectionContainer.getElementsByClassName("selection");
         for(var i=0; i< selections.length; i++){
             var selectionText = selections[i].getElementsByClassName("selectionText")[0];
-            var selectionCheck = selections[i].getElementsByClassName("selectionCheck")[0];
-            if(selectionCheck.checked){
+            var checkboxContainer = selections[i].getElementsByClassName("checkboxContainer")[0];
+            var checkBox = checkboxContainer.getElementsByTagName("input")[0];
+            if(checkBox.checked){
                 this.select.appendChild(this.createSelectedItem(selectionText.innerHTML));
             }
         }
@@ -171,9 +178,10 @@ var SelectPopUP = function(target, settings){
 
         for(var i=0; i< selections.length; i++){
             var selectionText = selections[i].getElementsByClassName("selectionText")[0];
-            var selectionCheck = selections[i].getElementsByClassName("selectionCheck")[0];
+            var checkboxContainer = selections[i].getElementsByClassName("checkboxContainer")[0];
+            var checkBox = checkboxContainer.getElementsByTagName("input")[0];
             if(selectedText.includes(selectionText.innerHTML)){
-                selectionCheck.checked = true;
+                checkBox.checked = true;
             }
         }
 
@@ -195,11 +203,13 @@ var SelectPopUP = function(target, settings){
         this.target.innerHTML = "";
         for(var i=0; i< selections.length; i++){
             var selectionText = selections[i].getElementsByClassName("selectionText")[0];
-            var selectionCheck = selections[i].getElementsByClassName("selectionCheck")[0];
+            //var selectionCheck = selections[i].getElementsByClassName("selectionCheck")[0];
+            var checkboxContainer = selections[i].getElementsByClassName("checkboxContainer")[0];
+            var checkBox = checkboxContainer.getElementsByTagName("input")[0];
             var selectionValue = selections[i].getAttribute("data-selection-value");
             var option = this.findOptionByValue(selectionValue);
 
-            if(selectionCheck.checked){
+            if(checkBox.checked){
                 option.selected = true;
                 this.target.appendChild(option);
                 selectedOptions.push(option);
