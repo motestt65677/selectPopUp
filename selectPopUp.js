@@ -1,10 +1,11 @@
 var SelectPopUP = function(target, settings){
-    this.target      = null;
-    this.options = []; // list of all selections
-    this.selectedOptions = []; //list of selected options from selections
-    this.selectedText = [];
-    this.selectedValue = []; //list of selected values
-    this.selectionContainer = null;
+    this.target      = null; //reference to target
+    this.selectionContainer = null; //reference to selectionContainer
+
+    this.options = []; //copy of  list of all selections
+    this.selectedOptions = []; //copy of list of selected options from selections
+    this.selectedText = []; //copy of list of selected text 
+    this.selectedValue = []; //copy of list of selected values 
 
 
     this.init = function() {
@@ -16,14 +17,16 @@ var SelectPopUP = function(target, settings){
 				this.target = document.querySelector(target);
 				break;
         }
+
         this.target.classList.add("hide");
         this.selectedOptions = this.getSelectedOptions();
         this.selectedValue = this.getSelectedValue();
         this.selectedText = this.getSelectedText();
-
         this.options = this.getOptions();
         this.settings = this.getSettings(settings);
+
         this.buildSelect();
+        
         window.addEventListener("click", this.hideSelection.bind(this));
         this.selectionContainer.addEventListener("click", this.selectionOnClick.bind(this));
 
@@ -147,7 +150,11 @@ var SelectPopUP = function(target, settings){
         return selectedText;
     }
     this.getSelectedOptions = function(){
-        return this.target.selectedOptions;
+        var selectedOptions = [];
+        for(var i = 0; i < this.target.selectedOptions.length; i++){
+            selectedOptions.push(this.target.selectedOptions[i]);
+        }
+        return selectedOptions;
     }
 
     this.getOptions = function(){
