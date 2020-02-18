@@ -20,6 +20,7 @@ var SelectPopUP = function(target, settings){
     this.selectedOptions = []; //copy of list of selected options from selections
     this.selectedText = []; //copy of list of selected text 
     this.selectedValue = []; //copy of list of selected values 
+    this.checkboxList = []; 
 
     this.init = function() {
 		switch(typeof target) {
@@ -36,7 +37,6 @@ var SelectPopUP = function(target, settings){
         this.selectedText = this.getSelectedText();
         this.options = this.getOptions();
         this.settings = this.getSettings(settings);
-
         this.buildSelect();
         
         window.addEventListener("click", this.hideSelection.bind(this));
@@ -92,7 +92,11 @@ var SelectPopUP = function(target, settings){
             
             checkboxContainer.classList.add("checkboxContainer");
             selectionCheck.setAttribute("type", "checkbox");
+            selectionCheck.setAttribute("id", this.target.id+"_"+i);
+
             selectionCheck.classList.add("selectionCheckBox");
+
+            this.checkboxList.push(selectionCheck);
 
             // selectionCheck.classList.add("selectionCheck");
             selectionCheck.addEventListener("change", this.selectionOnChange.bind(this));
@@ -108,6 +112,9 @@ var SelectPopUP = function(target, settings){
             selectionContainer.appendChild(selection);
 
         }
+
+
+
         if(this.options.length == 0){
             var div = document.createElement("div");
             div.innerHTML = "No results found";
@@ -149,7 +156,17 @@ var SelectPopUP = function(target, settings){
         this.modal.appendChild(this.selectionContainer);
         this.target.parentNode.insertBefore(this.select, this.target.nextSibling);
 
+        //prettyCheckable initiate
         this.updateSelection();
+        for (var i = 0; i < this.checkboxList.length; i++){
+            var checkbox = $("#"+this.checkboxList[i].id);
+            checkbox.prettyCheckable({label: " "});
+
+            if(checkbox.prop("checked")){
+                checkbox.prettyCheckable('check');
+            }
+            checkbox.change(this.selectionOnChange.bind(this));
+        }
 
     }
 
@@ -217,8 +234,10 @@ var SelectPopUP = function(target, settings){
         var selections = this.selectionContainer.getElementsByClassName("selection-pop");
         //var selectedOptions = this.selectedOptions ? this.selectedOptions : [];
         var selectedText = this.selectedText ? this.selectedText :[];
+        console.log("b");
 
         for(var i=0; i< selections.length; i++){
+            console.log("a");
             var selectionText = selections[i].getElementsByClassName("selectionText")[0];
             var checkboxContainer = selections[i].getElementsByClassName("checkboxContainer")[0];
             var checkBox = checkboxContainer.getElementsByTagName("input")[0];
@@ -278,5 +297,6 @@ var SelectPopUP = function(target, settings){
         this.updateSelect();
     }
     this.init();
+
 }
 

@@ -5,7 +5,12 @@
         <!-- <script src="jQuery-3.4.1.min.js"></script> -->
         <script src="jQuery-3.4.1.min.js"></script>
         <script src="selectPopUp.js"></script>
+        <script src="prettyCheckable/prettyCheckable.min.js"></script>
+
         <link rel="stylesheet" href="selectPopUp.css">
+        <link rel="stylesheet" href="prettyCheckable/prettyCheckable.css">
+
+
 
     </head>
     <body>
@@ -35,12 +40,25 @@
                     <option value="d">Audi</option>
                 </select>
             </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <input type="checkbox" class="myClass" value="yes" id="answer" name="answer"/>
         <script>
             var el     = document.querySelector('#mainSelect');
             var select = new SelectPopUP(el, {title:"Main Select"});
 
             var el2     = document.querySelector('#mainSelect2');
             var select2 = new SelectPopUP(el2, {title:"Main Select 2"});
+            $('.myClass').prettyCheckable({label: " "});
+            $('.myClass').change(function(){
+                console.log("a");
+            });
         </script>
     </body>
 </html>
