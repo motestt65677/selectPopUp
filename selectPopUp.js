@@ -84,12 +84,18 @@ var SelectPopUP = function(target, settings){
         for(var i = 0; i< this.options.length; i++){
             var selection = document.createElement('div');
             var selectionText = document.createElement("span");
+            var selectionValue = document.createElement("input");
             var selectionCheck = document.createElement("input");
             var checkboxContainer = document.createElement("label");
             var checkboxSpan = document.createElement("span");
             selectionText.innerHTML = this.options[i].text;
             selectionText.classList.add("selectionText");
             
+            selectionValue.setAttribute("type", "hidden");
+            selectionValue.value = this.options[i].value;
+            selectionValue.classList.add("selectionValue");
+
+
             checkboxContainer.classList.add("checkboxContainer");
             selectionCheck.setAttribute("type", "checkbox");
             selectionCheck.setAttribute("id", this.target.id+"_"+i);
@@ -106,6 +112,8 @@ var SelectPopUP = function(target, settings){
             selection.classList.add("selection-pop");
             selection.setAttribute("data-selection-value", this.options[i].value);
             selection.appendChild(selectionText);
+            selection.appendChild(selectionValue);
+
             selection.appendChild(checkboxContainer);
 
 
@@ -232,16 +240,10 @@ var SelectPopUP = function(target, settings){
     }
     this.updateSelection = function(){
         var selections = this.selectionContainer.getElementsByClassName("selection-pop");
-        //var selectedOptions = this.selectedOptions ? this.selectedOptions : [];
-        var selectedText = this.selectedText ? this.selectedText :[];
-        console.log("b");
-
-        for(var i=0; i< selections.length; i++){
-            console.log("a");
-            var selectionText = selections[i].getElementsByClassName("selectionText")[0];
+        for(var i = 0; i < this.target.children.length; i++){
             var checkboxContainer = selections[i].getElementsByClassName("checkboxContainer")[0];
             var checkBox = checkboxContainer.getElementsByTagName("input")[0];
-            if(selectedText.includes(selectionText.innerHTML)){
+            if(this.target.children[i].selected){
                 checkBox.checked = true;
             }
         }
