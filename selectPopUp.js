@@ -1,12 +1,25 @@
+/*
+sample code:
+        
+***initiate - add in onload to make sure select loading is complete.
+window.onload = function() {
+    var selectViewers = new SelectPopUP(document.querySelector('#viewers'), {title: "{{ $languageText['companyDeviceGroupEditInfoViewers'] }}"});
+    var selectDevices = new SelectPopUP(document.querySelector('#devices'), {title: "{{ $languageText['companyDeviceGroupEditInfoDevices'] }}"});
+};
+
+***get value
+$("#viewers").val();
+
+*/
+
 var SelectPopUP = function(target, settings){
     this.target      = null; //reference to target
     this.selectionContainer = null; //reference to selectionContainer
-
+    this.modal = null;
     this.options = []; //copy of  list of all selections
     this.selectedOptions = []; //copy of list of selected options from selections
     this.selectedText = []; //copy of list of selected text 
     this.selectedValue = []; //copy of list of selected values 
-
 
     this.init = function() {
 		switch(typeof target) {
@@ -17,7 +30,6 @@ var SelectPopUP = function(target, settings){
 				this.target = document.querySelector(target);
 				break;
         }
-
         this.target.classList.add("hide");
         this.selectedOptions = this.getSelectedOptions();
         this.selectedValue = this.getSelectedValue();
@@ -26,7 +38,7 @@ var SelectPopUP = function(target, settings){
         this.settings = this.getSettings(settings);
 
         this.buildSelect();
-
+        
         window.addEventListener("click", this.hideSelection.bind(this));
         this.selectionContainer.addEventListener("click", this.selectionOnClick.bind(this));
 
@@ -81,16 +93,26 @@ var SelectPopUP = function(target, settings){
             checkboxContainer.classList.add("checkboxContainer");
             selectionCheck.setAttribute("type", "checkbox");
             selectionCheck.classList.add("selectionCheckBox");
+
+            // selectionCheck.classList.add("selectionCheck");
             selectionCheck.addEventListener("change", this.selectionOnChange.bind(this));
             checkboxContainer.appendChild(selectionCheck);
             checkboxContainer.appendChild(checkboxSpan);
 
-            selection.classList.add("selection");
+            selection.classList.add("selection-pop");
             selection.setAttribute("data-selection-value", this.options[i].value);
             selection.appendChild(selectionText);
             selection.appendChild(checkboxContainer);
+
+
             selectionContainer.appendChild(selection);
 
+        }
+        if(this.options.length == 0){
+            var div = document.createElement("div");
+            div.innerHTML = "No results found";
+            div.classList.add("noResultsFound");
+            selectionContainer.appendChild(div);
         }
         var selectionFooter = document.createElement("div");
         selectionFooter.classList.add("selectionFooter");
@@ -114,21 +136,34 @@ var SelectPopUP = function(target, settings){
         selectionContainer.appendChild(selectionFooter);
 
         this.selectionContainer = selectionContainer;
-        this.target.parentNode.insertBefore(this.selectionContainer, this.target.nextSibling);
+
+        selectionContainerModal = document.createElement("div");
+        selectionContainerModal.id = "selectionContainerModal";
+        selectionContainerModal.classList.add("selectionContainerModal");
+        selectionContainerModal.classList.add("hide");
+
+        document.body.appendChild(selectionContainerModal);
+        this.modal =  selectionContainerModal;
+
+        // this.target.parentNode.insertBefore(this.selectionContainer, this.target.nextSibling);
+        this.modal.appendChild(this.selectionContainer);
         this.target.parentNode.insertBefore(this.select, this.target.nextSibling);
 
         this.updateSelection();
+
     }
 
     this.toggleSelection = function(e){
         e.stopPropagation();
         this.selectionContainer.classList.toggle("hide");
+        this.modal.classList.toggle("hide");
     }
     this.selectionOnClick = function(e){
         e.stopPropagation();
     }
     this.hideSelection = function(){
         this.selectionContainer.classList.add("hide");
+        this.modal.classList.add("hide");
     }
 
     this.getSelectedValue = function(){
@@ -168,7 +203,7 @@ var SelectPopUP = function(target, settings){
         //update selected option
         this.select.innerHTML = "";
         this.selectedOptions = [];
-        var selections = this.selectionContainer.getElementsByClassName("selection");
+        var selections = this.selectionContainer.getElementsByClassName("selection-pop");
         for(var i=0; i< selections.length; i++){
             var selectionText = selections[i].getElementsByClassName("selectionText")[0];
             var checkboxContainer = selections[i].getElementsByClassName("checkboxContainer")[0];
@@ -179,7 +214,7 @@ var SelectPopUP = function(target, settings){
         }
     }
     this.updateSelection = function(){
-        var selections = this.selectionContainer.getElementsByClassName("selection");
+        var selections = this.selectionContainer.getElementsByClassName("selection-pop");
         //var selectedOptions = this.selectedOptions ? this.selectedOptions : [];
         var selectedText = this.selectedText ? this.selectedText :[];
 
@@ -191,8 +226,6 @@ var SelectPopUP = function(target, settings){
                 checkBox.checked = true;
             }
         }
-
-        
     }
     this.createSelectedItem = function(text){
         var span = document.createElement("span");
@@ -202,7 +235,7 @@ var SelectPopUP = function(target, settings){
     }
     this.updateTargetFromSelection = function(){
 
-        var selections = this.selectionContainer.getElementsByClassName("selection");
+        var selections = this.selectionContainer.getElementsByClassName("selection-pop");
         var selectedOptions = [];
         var selectedText = [];
         var selectedValue = [];
@@ -246,3 +279,4 @@ var SelectPopUP = function(target, settings){
     }
     this.init();
 }
+
